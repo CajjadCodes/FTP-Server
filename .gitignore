@@ -33,5 +33,5 @@
 
 # Build Files
 build/*
-server
-client
+ServerRoot/*
+ClientRoot/*
