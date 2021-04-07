@@ -12,8 +12,10 @@ CLIENT_BUILD_DIR=$(BUILD_DIR)/client
 INCLUDE=$(MODELS_DIR)/include
 INCLUDE_BUILD_DIR=$(BUILD_DIR)/include
 
+SERVER_ROOT=ServerRoot
+CLIENT_ROOT=ClientRoot
 
-all: $(SERVER_BUILD_DIR) $(CLIENT_BUILD_DIR) $(INCLUDE_BUILD_DIR) server client
+all: $(SERVER_BUILD_DIR) $(CLIENT_BUILD_DIR) $(INCLUDE_BUILD_DIR) $(SERVER_ROOT)/server $(CLIENT_ROOT)/client
 
 $(SERVER_BUILD_DIR):
 	mkdir -p $(SERVER_BUILD_DIR)
@@ -24,11 +26,16 @@ $(CLIENT_BUILD_DIR):
 $(INCLUDE_BUILD_DIR):
 	mkdir -p $(INCLUDE_BUILD_DIR)
 
+$(SERVER_ROOT):
+	mkdir -p $(SERVER_ROOT)
+
+$(CLIENT_ROOT):
+	mkdir -p $(CLIENT_ROOT)
 
 # Server executable build
 
-server: $(SERVER_BUILD_DIR)/main.o 
-	$(CC) $(CF) -o server $(SERVER_BUILD_DIR)/main.o 
+$(SERVER_ROOT)/server: $(SERVER_BUILD_DIR)/main.o 
+	$(CC) $(CF) -o $(SERVER_ROOT)/server $(SERVER_BUILD_DIR)/main.o 
 
 $(SERVER_BUILD_DIR)/main.o: $(SERVER_MODELS_DIR)/main.c 
 	$(CC) $(CF) -c -I$(INCLUDE) -o $(SERVER_BUILD_DIR)/main.o $(SERVER_MODELS_DIR)/main.c
@@ -36,8 +43,8 @@ $(SERVER_BUILD_DIR)/main.o: $(SERVER_MODELS_DIR)/main.c
 
 # Client executable build
 
-client: $(CLIENT_BUILD_DIR)/main.o 
-	$(CC) $(CF) -o client $(CLIENT_BUILD_DIR)/main.o 
+$(CLIENT_ROOT)/client $(CLIENT_BUILD_DIR)/main.o 
+	$(CC) $(CF) -o $(CLIENT_ROOT)/client $(CLIENT_BUILD_DIR)/main.o 
 
 $(CLIENT_BUILD_DIR)/main.o: $(CLIENT_MODELS_DIR)/main.c
 	$(CC) $(CF) -c -I$(INCLUDE) -o $(CLIENT_BUILD_DIR)/main.o $(CLIENT_MODELS_DIR)/main.c
@@ -47,4 +54,4 @@ $(CLIENT_BUILD_DIR)/main.o: $(CLIENT_MODELS_DIR)/main.c
 
 .PHONY: clean
 clean:
-	rm -rf $(BUILD_DIR) *.o server client &> /dev/null
+	rm -rf $(BUILD_DIR) $(SERVER_ROOT)/server $(CLIENT_ROOT)/client *.o &> /dev/null
